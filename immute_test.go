@@ -1,7 +1,6 @@
 package immute
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -16,8 +15,11 @@ func TestIntSequence(t *testing.T) {
 		t.Fatalf("Sequence has wrong length it should be 2", seq, seq.Length())
 	}
 
-	filter = seq.Filter(func(i interface{}, k interface{}) {
-		fmt.Println("k:", i, k)
+	filter := seq.Filter(func(i interface{}, k interface{}) interface{} {
 		return i.(string) == "sic"
 	}, func(c int, f interface{}) {})
+
+	if filter.Length() != 1 {
+		t.Fatalf("Sequence has wrong length it should be 1 after filter", seq, seq.Length())
+	}
 }
