@@ -36,6 +36,10 @@ func (s *ListSequence) Add(i ...interface{}) {
 	s.Data = append(s.Data, i...)
 }
 
+func (s *ListSequence) Get(f int) interface{} {
+	return s.Data[f]
+}
+
 func (s *ListSequence) Set(f int, i interface{}) {
 	if f >= len(s.Data) || f < 0 {
 		return
@@ -55,6 +59,14 @@ func (s *ListSequence) toObj() interface{} {
 //MapSequence for all map related collections,its the root of all map sequences
 type MapSequence struct {
 	Data map[interface{}]interface{}
+}
+
+func (s *MapSequence) Get(f int) interface{} {
+	return s.Data[f]
+}
+
+func (s *MapSequence) Set(f int, i interface{}) {
+	s.Data[f] = i
 }
 
 func (s *MapSequence) toObj() interface{} {
