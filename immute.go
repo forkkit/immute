@@ -32,6 +32,16 @@ func (s *ListSequence) Each(f EachHandler, c CompleteHandler) *Sequence {
 	return nil
 }
 
+func (s *ListSequence) Add(i ...interface{}) {
+	s.Data = append(s.Data, i...)
+}
+
+func (s *ListSequence) Set(f int, i interface{}) {
+	if _, ok := s.Data[f]; ok {
+		s.Data[f] = i
+	}
+}
+
 func (s *ListSequence) Length() int {
 	return len(s.Data)
 }
