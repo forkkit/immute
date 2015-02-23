@@ -37,9 +37,11 @@ func (s *ListSequence) Add(i ...interface{}) {
 }
 
 func (s *ListSequence) Set(f int, i interface{}) {
-	if _, ok := s.Data[f]; ok {
-		s.Data[f] = i
+	if f >= len(s.Data) || f < 0 {
+		return
 	}
+
+	s.Data[f] = i
 }
 
 func (s *ListSequence) Length() int {
