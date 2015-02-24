@@ -27,8 +27,8 @@
       })
 
       //get the sequence result lazily and it generates the sequence when you call this
-      filtered := filter.toObj()
-      mapped := map.toObj()
+      filtered := filter.Obj()
+      mapped := map.Obj()
 
 
   ```

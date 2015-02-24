@@ -13,7 +13,8 @@ type CompleteHandler func(r int, a interface{})
 type Sequencer interface {
 	Each(f EachHandler, c CompleteHandler) *Sequence
 	Length() int
-	toObj() interface{}
+	Obj() interface{}
+	Add(f interface{}, i interface{})
 }
 
 //ListSequence for all list related collections,its the root of all list sequences
@@ -32,8 +33,8 @@ func (s *ListSequence) Each(f EachHandler, c CompleteHandler) *Sequence {
 	return nil
 }
 
-func (s *ListSequence) Add(i ...interface{}) {
-	s.Data = append(s.Data, i...)
+func (s *ListSequence) Add(i interface{}, _ interface{}) {
+	s.Data = append(s.Data, i)
 }
 
 func (s *ListSequence) Get(f int) interface{} {
@@ -52,7 +53,7 @@ func (s *ListSequence) Length() int {
 	return len(s.Data)
 }
 
-func (s *ListSequence) toObj() interface{} {
+func (s *ListSequence) Obj() interface{} {
 	return s.Data
 }
 
@@ -61,15 +62,19 @@ type MapSequence struct {
 	Data map[interface{}]interface{}
 }
 
-func (s *MapSequence) Get(f int) interface{} {
+func (s *MapSequence) Get(f interface{}) interface{} {
 	return s.Data[f]
 }
 
-func (s *MapSequence) Set(f int, i interface{}) {
+func (s *MapSequence) Set(f interface{}, i interface{}) {
 	s.Data[f] = i
 }
 
-func (s *MapSequence) toObj() interface{} {
+func (s *MapSequence) Add(i interface{}, f interface{}) {
+	s.Set(i, f)
+}
+
+func (s *MapSequence) Obj() interface{} {
 	return s.Data
 }
 
@@ -104,12 +109,16 @@ type Sequence struct {
 	Size   int
 }
 
+func (s *Sequence) Add(i interface{}, f interface{}) {
+	s.Parent.Add(i, f)
+}
+
 func (s *Sequence) Each(f EachHandler, c CompleteHandler) *Sequence {
 	return s.Parent.Each(f, c)
 }
 
-func (s *Sequence) toObj() interface{} {
-	return s.Parent.toObj()
+func (s *Sequence) Obj() interface{} {
+	return s.Parent.Obj()
 }
 
 func (s *Sequence) Length() interface{} {
@@ -226,8 +235,8 @@ func (s *Sequence) Filter(fe EachHandler, co CompleteHandler) *SequenceOp {
 	return &SequenceOp{s, Filter, fe, co}
 }
 
-func (s *SequenceOp) toObj() interface{} {
-	return s.Each().toObj()
+func (s *SequenceOp) Obj() interface{} {
+	return s.Each().Obj()
 }
 
 func CreateList(i []interface{}) *Sequence {
