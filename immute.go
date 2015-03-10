@@ -15,6 +15,9 @@ type Sequencer interface {
 	Length() int
 	Obj() interface{}
 	Add(f interface{}, i interface{})
+	Get(f interface{}) interface{}
+	Delete(f interface{}) interface{}
+	Clear()
 }
 
 //ListSequence for all list related collections,its the root of all list sequences
@@ -33,20 +36,49 @@ func (s *ListSequence) Each(f EachHandler, c CompleteHandler) *Sequence {
 	return nil
 }
 
+func (s *ListSequence) Clear() {
+	s.Data = make([]interface{}, 0)
+}
+
 func (s *ListSequence) Add(i interface{}, _ interface{}) {
 	s.Data = append(s.Data, i)
 }
 
-func (s *ListSequence) Get(f int) interface{} {
-	return s.Data[f]
+func (s *ListSequence) Delete(f interface{}) interface{} {
+	index, ok := f.(int)
+
+	if !ok {
+		return nil
+	}
+
+	// rd := *s.Data
+	// rd = append(rd[:index], rd[:index+1]...)
+	item := s.Data[index]
+	s.Data = append(s.Data[:index], s.Data[index+1:]...)
+	// s.Data = *rd
+	return item
 }
 
-func (s *ListSequence) Set(f int, i interface{}) {
-	if f >= len(s.Data) || f < 0 {
+func (s *ListSequence) Get(f interface{}) interface{} {
+	ind, ok := f.(int)
+	if !ok {
+		return nil
+	}
+	return s.Data[ind]
+}
+
+func (s *ListSequence) Set(f interface{}, i interface{}) {
+	ind, ok := f.(int)
+
+	if !ok {
 		return
 	}
 
-	s.Data[f] = i
+	if ind >= len(s.Data) || ind < 0 {
+		return
+	}
+
+	s.Data[ind] = i
 }
 
 func (s *ListSequence) Length() int {
@@ -62,6 +94,10 @@ type MapSequence struct {
 	Data map[interface{}]interface{}
 }
 
+func (s *MapSequence) Clear() {
+	s.Data = make(map[interface{}]interface{})
+}
+
 func (s *MapSequence) Get(f interface{}) interface{} {
 	return s.Data[f]
 }
@@ -72,6 +108,12 @@ func (s *MapSequence) Set(f interface{}, i interface{}) {
 
 func (s *MapSequence) Add(i interface{}, f interface{}) {
 	s.Set(i, f)
+}
+
+func (s *MapSequence) Delete(i interface{}) interface{} {
+	item := s.Data[i]
+	delete(s.Data, i)
+	return item
 }
 
 func (s *MapSequence) Obj() interface{} {
@@ -109,6 +151,18 @@ type Sequence struct {
 	Size   int
 }
 
+func (s *Sequence) Delete(i interface{}) interface{} {
+	return s.Parent.Delete(i)
+}
+
+func (s *Sequence) Clear() {
+	s.Parent.Clear()
+}
+
+func (s *Sequence) Get(i interface{}) {
+	s.Parent.Get(i)
+}
+
 func (s *Sequence) Add(i interface{}, f interface{}) {
 	s.Parent.Add(i, f)
 }
@@ -121,7 +175,7 @@ func (s *Sequence) Obj() interface{} {
 	return s.Parent.Obj()
 }
 
-func (s *Sequence) Length() interface{} {
+func (s *Sequence) Length() int {
 	return s.Parent.Length()
 }
 
