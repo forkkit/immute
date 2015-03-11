@@ -40,6 +40,10 @@ func (s *ListSequence) Clear() {
 	s.Data = make([]interface{}, 0)
 }
 
+func (s *ListSequence) Push(i interface{}) {
+	s.Add(i, nil)
+}
+
 func (s *ListSequence) Add(i interface{}, _ interface{}) {
 	s.Data = append(s.Data, i)
 }
@@ -89,6 +93,10 @@ func (s *ListSequence) Obj() interface{} {
 	return s.Data
 }
 
+func (s *ListSequence) Seq() *Sequence {
+	return &Sequence{Sequencer(s)}
+}
+
 //MapSequence for all map related collections,its the root of all map sequences
 type MapSequence struct {
 	Data map[interface{}]interface{}
@@ -124,6 +132,10 @@ func (s *MapSequence) Length() int {
 	return len(s.Data)
 }
 
+func (s *MapSequence) Seq() *Sequence {
+	return &Sequence{Sequencer(s)}
+}
+
 func (s *MapSequence) Each(f EachHandler, c CompleteHandler) *Sequence {
 	count := 0
 
@@ -135,20 +147,9 @@ func (s *MapSequence) Each(f EachHandler, c CompleteHandler) *Sequence {
 	return nil
 }
 
-//CreateListSeq creates a pure list sequence  of any type
-func CreateListSeq(i []interface{}) *ListSequence {
-	return &ListSequence{i}
-}
-
-//CreateMapSeq creates a pure map sequence  of any type
-func CreateMapSeq(i map[interface{}]interface{}) *MapSequence {
-	return &MapSequence{i}
-}
-
 //Sequence is the core atomic structure for all sequence based operations
 type Sequence struct {
 	Parent Sequencer
-	Size   int
 }
 
 func (s *Sequence) Delete(i interface{}) interface{} {
@@ -198,7 +199,7 @@ func (s *MemoizedSequenceOp) Each() *Sequence {
 	if s.Cache != nil {
 		return s.Cache
 	}
-	s.Cache = s.op.Each()
+	s.Cache = s.op.Each().Seq()
 	return s.Cache
 }
 
@@ -293,12 +294,28 @@ func (s *SequenceOp) Obj() interface{} {
 	return s.Each().Obj()
 }
 
+func (s *SequenceOp) Seq() *Sequence {
+	return s.Each()
+}
+
+func (s *Sequence) Seq() *Sequence {
+	return s
+}
+
 func CreateList(i []interface{}) *Sequence {
-	l := &ListSequence{i}
-	return &Sequence{Sequencer(l), len(i)}
+	return (&ListSequence{i}).Seq()
 }
 
 func CreateMap(i map[interface{}]interface{}) *Sequence {
-	m := &MapSequence{i}
-	return &Sequence{Sequencer(m), len(i)}
+	return (&MapSequence{i}).Seq()
+}
+
+//CreateListSeq creates a pure list sequence  of any type
+func CreateListSeq(i []interface{}) *ListSequence {
+	return &ListSequence{i}
+}
+
+//CreateMapSeq creates a pure map sequence  of any type
+func CreateMapSeq(i map[interface{}]interface{}) *MapSequence {
+	return &MapSequence{i}
 }
