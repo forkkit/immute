@@ -302,20 +302,12 @@ func (s *Sequence) Seq() *Sequence {
 	return s
 }
 
+//CreateListSeq creates a pure list sequence  of any type
 func CreateList(i []interface{}) *Sequence {
 	return (&ListSequence{i}).Seq()
 }
 
+//CreateMapSeq creates a pure map sequence  of any type
 func CreateMap(i map[interface{}]interface{}) *Sequence {
 	return (&MapSequence{i}).Seq()
-}
-
-//CreateListSeq creates a pure list sequence  of any type
-func CreateListSeq(i []interface{}) *ListSequence {
-	return &ListSequence{i}
-}
-
-//CreateMapSeq creates a pure map sequence  of any type
-func CreateMapSeq(i map[interface{}]interface{}) *MapSequence {
-	return &MapSequence{i}
 }
