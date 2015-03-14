@@ -40,7 +40,7 @@
 ##API
     
 ####Sequences
-     Early on immute was about sequences,a set of mutable values that can be iterated ,map and performed operation on, although at first glance golang may seem not to suite such dynamic behaviour but it is all in the eyes that sees it,ofcourse a few things had to be adopted to allow the global applyable sequence operations without having to go to reflection for that.
+  Early on immute was about sequences,a set of mutable values that can be iterated ,map and performed operation on, although at first glance golang may seem not to suite such dynamic behaviour but it is all in the eyes that sees it,ofcourse a few things had to be adopted to allow the global applyable sequence operations without having to go to reflection for that.
 
   -  Sequencer
       Both List and Map sequences or any other sequence must match the `Sequener` interface which has the follow methods:
