@@ -82,11 +82,11 @@
 
 
 ####SequenceOperation (SequenceOp)
-   These are sequencable processors,they take sequences to create another sequence from their original versions and allows the basic operations, among such include:
-
+ These are sequencable processors,they take sequences to create another sequence from their original versions and allows the basic operations, among such include:
 
    - Filter: this create a  `SequenceOp` that filters out the sequence based on a predicate provided 
-
+      
+      ```
             data := immute.CreateList(map[interface{}]interface{‘name”:”ally”,”tel”:07087723232 })
         
             filtered := data.Filter(func (val interface{},key interface{}) interface{} {
@@ -94,9 +94,11 @@
             },func (total int, obj interface{}){
                 //its done
             })
-            
-  - Map: this create a  `SequenceOp` that maps out the result sequence on a predicate provided 
+     ```
 
+- Map: this create a  `SequenceOp` that maps out the result sequence on a predicate provided 
+      
+      ```
             data := immute.CreateList(map[interface{}]interface{‘name”:”ally”,”tel”:07087723232 })
         
             mapped := data.Map(func (val interface{},key interface{}) interface{} {
@@ -104,6 +106,7 @@
             },func (total int, obj interface{}){
                 //its done
             })
+     ```
 
 
 ####Immutable Structures 
